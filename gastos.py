@@ -39,6 +39,28 @@ def ver_gastos(gastos):
         print(f"{gasto['fecha']} | {gasto['categoria']} | {gasto['descripcion']} | ${gasto['monto']:.2f}")
 
 
+def resumen_por_categoria(gastos):
+    if len(gastos) == 0:
+        print("No hay gastos registrados.")
+        return
+
+    totales ={}
+    for gasto in gastos:
+        categoria = gasto["categoria"]
+        if categoria in totales:
+            totales[categoria] += gasto["monto"]
+        else:
+            totales[categoria] = gasto["monto"]
+
+    print("\n--- RESUMEN POR CATEGORIA ---")
+    for categoria, total in totales.items():
+        print(f"{categoria}: ${total:.2f}")
+
+
+    total_general = sum(totales.values())
+    print(f"TOTAL: ${total_general:.2f}")
+
+
 def main():
     gastos = []
     while True:
@@ -50,7 +72,7 @@ def main():
         elif opcion == "2":
             ver_gastos(gastos)
         elif opcion == "3":
-            print("Aquí vamos a ver el resumen")
+            resumen_por_categoria(gastos)
         elif opcion == "4":
             print("¡Hasta luego!")
             break
