@@ -1,5 +1,8 @@
+import csv
+import os
 from datetime import date
 
+ARCHIVO = "gastos.csv"
 
 def mostrar_menu():
     print("\n=== GESTOR DE GASTOS ===")
@@ -8,6 +11,25 @@ def mostrar_menu():
     print("3. Resumen por categoria")
     print("4. Salir")
 
+def cargar_gastos():
+    if not os.path.exists(ARCHIVO):
+        return []
+
+    gastos = []
+    with open(ARCHIVO, "r", encoding="utf-8") as archivo:
+        lector = csv.DictReader(archivo)
+        for fila in lector:
+            fila["monto"] = float(fila["monto"])
+            gastos.append(fila)
+    return gastos
+
+
+def guardar_gastos(gastos):
+    with open(ARCHIVO, "w", newline="", encoding="utf-8") as archivo:
+        campos = ["fecha", "descripcion", "categoria", "monto"]
+        escritor = csv.DictWriter(archivo, fieldnames=campos)
+        escritor.writeheader()
+        escritor.writerows(gastos)
 
 def agregar_gasto(gastos):
     descripcion = input("Descripcion: ")
@@ -62,13 +84,14 @@ def resumen_por_categoria(gastos):
 
 
 def main():
-    gastos = []
+    gastos = cargar_gastos()
     while True:
         mostrar_menu()
         opcion = input("Elige una opcion: ")
 
         if opcion == "1":
             agregar_gasto(gastos)
+            guardar_gastos(gastos)
         elif opcion == "2":
             ver_gastos(gastos)
         elif opcion == "3":
